@@ -61,16 +61,6 @@ pub fn format_ton(nano: &BigUint) -> String {
     format!("{whole}.{:0>9}", frac)
 }
 
-pub fn format_units(amount: &BigUint, decimals: u32) -> String {
-    if decimals == 0 {
-        return amount.to_string();
-    }
-    let base = BigUint::from(10u32).pow(decimals);
-    let whole = amount / &base;
-    let frac = (amount % &base).to_string();
-    format!("{whole}.{:0>width$}", frac, width = decimals as usize)
-}
-
 fn decimal_ratio(input: &str, max_frac: usize) -> Result<(BigUint, BigUint)> {
     let input = input.trim();
     if input.is_empty() {

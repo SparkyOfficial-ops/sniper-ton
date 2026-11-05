@@ -5,7 +5,6 @@ use serde_json::Value;
 
 #[derive(Debug, Clone)]
 pub struct ObservedBuy {
-    pub tx_hash: String,
     pub jetton: String,
     pub symbol: String,
     pub dex: String,
@@ -34,12 +33,12 @@ pub async fn find_buy(http: &reqwest::Client, api_key: &str, wallet: &str, tx_ha
         if !same {
             continue;
         }
-        return Ok(buy_from_event(&event, tx_hash));
+        return Ok(buy_from_event(&event));
     }
     Ok(None)
 }
 
-fn buy_from_event(event: &Value, tx_hash: &str) -> Option<ObservedBuy> {
+fn buy_from_event(event: &Value) -> Option<ObservedBuy> {
     let actions = event.get("actions")?.as_array()?;
     for action in actions {
         if action.get("type").and_then(|item| item.as_str()) != Some("JettonSwap") {
@@ -62,7 +61,6 @@ fn buy_from_event(event: &Value, tx_hash: &str) -> Option<ObservedBuy> {
         let symbol = out.get("symbol").and_then(|item| item.as_str()).unwrap_or("").to_string();
         let dex = swap.get("dex").and_then(|item| item.as_str()).unwrap_or("").to_string();
         return Some(ObservedBuy {
-            tx_hash: tx_hash.to_string(),
             jetton,
             symbol,
             dex,

@@ -94,7 +94,8 @@ fn decode(text: &str, stonfi: &HashSet<String>, dedust: &HashSet<String>, wallet
     let value: Value = serde_json::from_str(text).ok()?;
     let method = value.get("method").and_then(|item| item.as_str()).unwrap_or("");
     if method == "subscribe_account" {
-        tracing::info!("подписка: {}", value.get("result").unwrap_or(&Value::Null));
+        let result = value.get("result").cloned().unwrap_or(Value::Null);
+        tracing::info!("подписка: {result}");
         return None;
     }
     if method != "account_transaction" {

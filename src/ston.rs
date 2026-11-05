@@ -33,7 +33,6 @@ pub struct Simulation {
     pub offer_jetton_wallet: String,
     pub ask_jetton_wallet: String,
     pub pool_address: String,
-    pub router_address: String,
     pub router: RouterMeta,
     pub offer_units: String,
     pub ask_units: String,
@@ -47,7 +46,6 @@ pub struct Simulation {
 pub struct RouterMeta {
     pub address: String,
     pub major_version: u32,
-    pub minor_version: u32,
 }
 
 #[derive(Debug, Clone, Deserialize)]

@@ -28,6 +28,12 @@ struct Books {
 }
 
 pub async fn run(settings: Settings) -> Result<()> {
+    if settings.tonapi_key.is_empty() {
+        anyhow::bail!("нужен TONAPI_KEY: ключ берётся бесплатно на https://tonconsole.com");
+    }
+    if settings.mode == Mode::Both && settings.copy_wallets.is_empty() {
+        tracing::warn!("copy_wallets пуст: копирование выключено, работает только снайп");
+    }
     let http = reqwest::Client::builder()
         .timeout(Duration::from_secs(40))
         .user_agent("sniper-ton/0.1")
@@ -300,15 +306,21 @@ async fn on_wallet(
         return Ok(());
     }
     let mut found: Option<ObservedBuy> = None;
-    for wallet in &settings.copy_wallets {
-        match copy::find_buy(http, &settings.tonapi_key, &wallet.to_base64_url(), tx_hash, lt).await {
-            Ok(Some(buy)) => {
-                found = Some(buy);
-                break;
+    for attempt in 1..=4 {
+        for wallet in &settings.copy_wallets {
+            match copy::find_buy(http, &settings.tonapi_key, &wallet.to_base64_url(), tx_hash, lt).await {
+                Ok(Some(buy)) => {
+                    found = Some(buy);
+                    break;
+                }
+                Ok(None) => {}
+                Err(err) => tracing::debug!("лента {}: {err}", wallet.to_base64_url()),
             }
-            Ok(None) => {}
-            Err(err) => tracing::debug!("лента {}: {err}", wallet.to_base64_url()),
         }
+        if found.is_some() || attempt == 4 {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(500)).await;
     }
     let Some(buy) = found else {
         tracing::info!("транзакция {tx_hash} без покупки жетона за TON");
@@ -343,11 +355,12 @@ async fn on_wallet(
         format_ton(&amount)
     );
     let pool = if buy.dex.to_ascii_lowercase().contains("dedust") {
-        dedust
-            .native_pools()
-            .await
-            .ok()
-            .and_then(|pools| pools.into_iter().find(|pool| address_key(&pool.jetton) == jetton_key))
+        dedust.native_pools().await.ok().and_then(|pools| {
+            pools
+                .into_iter()
+                .filter(|pool| address_key(&pool.jetton) == jetton_key)
+                .max_by(|left, right| left.reserve_ton.cmp(&right.reserve_ton))
+        })
     } else {
         None
     };

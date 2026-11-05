@@ -12,6 +12,7 @@
 ## Что нужно
 
 - Windows, Linux или macOS, Rust 1.80+
+- на Windows без Visual Studio нужен MinGW (`gcc` в PATH) и тулчейн `stable-x86_64-pc-windows-gnu`
 - бесплатный ключ TonAPI: [tonconsole.com](https://tonconsole.com)
 - кошелёк v4r2 (или v3r2 / v5r1) с TON на балансе
 
@@ -21,6 +22,13 @@
 copy config.example.toml config.toml
 copy .env.example .env
 cargo run --release -- --config config.toml run
+```
+
+Если `link.exe` не найден, соберите MinGW-тулчейном:
+
+```powershell
+rustup toolchain install stable-x86_64-pc-windows-gnu
+cargo +stable-x86_64-pc-windows-gnu run --release -- --config config.toml run
 ```
 
 В `.env` или `config.toml`:

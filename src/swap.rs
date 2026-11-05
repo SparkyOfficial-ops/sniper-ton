@@ -2,7 +2,6 @@ use crate::dedust::estimate_out;
 use crate::ston::Simulation;
 use anyhow::{Context, Result};
 use num_bigint::BigUint;
-use num_traits::Zero;
 use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tonlib_core::cell::{Cell, CellBuilder};
@@ -240,6 +239,7 @@ impl ToArc for Cell {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use num_traits::Zero;
 
     fn addr() -> TonAddress {
         TonAddress::from_str("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs").unwrap()

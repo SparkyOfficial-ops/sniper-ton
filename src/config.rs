@@ -118,9 +118,6 @@ impl Settings {
         let tonapi_key = env_or("TONAPI_KEY", file.tonapi_key);
         let toncenter_api_key = env_or("TONCENTER_API_KEY", file.toncenter_api_key);
         let mnemonic = env_or("TON_MNEMONIC", file.mnemonic);
-        if tonapi_key.is_empty() {
-            bail!("нужен TONAPI_KEY: ключ берётся бесплатно на https://tonconsole.com");
-        }
         if file.referral_fee_bps > 100 {
             bail!("referral_fee_bps не больше 100 (это 1%)");
         }
@@ -149,8 +146,8 @@ impl Settings {
             .iter()
             .map(|addr| parse_address(addr))
             .collect::<Result<Vec<_>>>()?;
-        if mode.copy() && copy_wallets.is_empty() {
-            bail!("режим copy включён, а copy_wallets пуст");
+        if mode == Mode::Copy && copy_wallets.is_empty() {
+            bail!("режим copy требует хотя бы один адрес в copy_wallets");
         }
 
         Ok(Self {
