@@ -12,7 +12,7 @@
 ## Что нужно
 
 - Windows, Linux или macOS, Rust 1.80+
-- на Windows без Visual Studio нужен MinGW (`gcc` в PATH) и тулчейн `stable-x86_64-pc-windows-gnu`
+- на этой машине Visual Studio стоит в `E:\VisualStudio`. Обычный терминал его не видит, поэтому перед `cargo` нужна среда x64
 - бесплатный ключ TonAPI: [tonconsole.com](https://tonconsole.com)
 - кошелёк v4r2 (или v3r2 / v5r1) с TON на балансе
 
@@ -21,15 +21,10 @@
 ```powershell
 copy config.example.toml config.toml
 copy .env.example .env
-cargo run --release -- --config config.toml run
+cmd /c "call E:\VisualStudio\VC\Auxiliary\Build\vcvars64.bat && cargo run --release -- --config config.toml run"
 ```
 
-Если `link.exe` не найден, соберите MinGW-тулчейном:
-
-```powershell
-rustup toolchain install stable-x86_64-pc-windows-gnu
-cargo +stable-x86_64-pc-windows-gnu run --release -- --config config.toml run
-```
+`vcvars64.bat` добавляет компоновщик MSVC в эту сессию. Без него `cargo` пишет, что не найден `link.exe`.
 
 В `.env` или `config.toml`:
 
