@@ -62,10 +62,6 @@ cargo run --release -- quote --jetton EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2
 
 Остановка: Ctrl+C.
 
-## Релизы и пакеты
-
-Тег `v*` запускает сборку на GitHub. В Release попадают `sniper-ton-windows-x64.exe`, `sniper-ton-linux-x64` и их SHA256. В Packages уходит образ `ghcr.io/<владелец>/sniper-ton` с тегами версии и `latest`.
-
 ```powershell
 git tag v0.1.0
 git push origin v0.1.0
