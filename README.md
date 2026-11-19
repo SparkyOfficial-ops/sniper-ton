@@ -66,5 +66,3 @@ cargo run --release -- quote --jetton EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2
 git tag v0.1.0
 git push origin v0.1.0
 ```
-
-У репозитория сейчас нет GitHub remote. Сначала запушьте проект на GitHub, затем поставьте тег. Workflow берёт `GITHUB_TOKEN` сам, отдельный секрет не нужен.
